@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class ObjectCount : MonoBehaviour {
 
@@ -66,6 +67,10 @@ public class ObjectCount : MonoBehaviour {
 
     Rigidbody2D[] CustomerRigid;//お客さんのRigidbody
 
+    //シャッターのアニメーション処理
+    public GameObject Shutter;//unity上でアタッチ
+    public AnimatorStateInfo animinfo;
+
     const int REMAINING = 3;
     const int price = 100;//スムージーの単価
     const int ALLFOOD = 10;//全混ぜスムージーが発動するまでに完成させなければいけないスムージーの個数
@@ -111,6 +116,9 @@ public class ObjectCount : MonoBehaviour {
     public bool CursorLock = false;
 
     float rotSpeed = 0;//回転速度
+
+    //アニメーションフラグ
+    Animator animflg;
 
     // Use this for initialization
     void Start() {
@@ -239,6 +247,10 @@ public class ObjectCount : MonoBehaviour {
 
         OrderCount();
 
+        //アニメーション処理の初期化
+        animinfo = Shutter.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0);
+        animflg = Shutter.GetComponent<Animator>();
+
         AmountText.text = this.TotalAmount.ToString("F0") + "円";//合計金額
 
         TrustText.text = this.TrustPer.ToString("F0") + "％";//信頼度
@@ -247,100 +259,86 @@ public class ObjectCount : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        //if (ProcessFlg == (int)Process.MAINPROCESS)//スムージーを作る時間
-        //{
-        //    MainProcess();
-        //}
-        //else if(ProcessFlg == (int)Process.BONUSTIME)//ボーナスタイム
-        //{
-        //    BonusTime();
-        //}
-        //else if(ProcessFlg == (int)Process.FADEINPROCESS)
-        //{
-        //    MixerFadeInProcess();
-        //}
-        //else if(ProcessFlg == (int)Process.FADEOUTPROCESS)
-        //{
-        //    MixerFadeOutProcess();
-        //}
-        //else if(flg && ProcessFlg == (int)Process.PERFORMANCETIME)//注文の切り替え
-        //{
-        //    PerformanceTime();
-        //}
-
-        //次失敗したときにゲームオーバーになるときに人気度を揺らす
-        if (Trustarray[TrustLevel] >= TrustPer)
+        if (animinfo.normalizedTime < 1.0f)
         {
-            ShakeRange = Random.insideUnitSphere;
-            TrustTextTransform.position = TrustTextPosition + ShakeRange * ShakePowerText;
-            TrustPerTransform.localPosition = TrustPerPosotion + ShakeRange * ShakePowerPer;
-            if(TrustText.GetComponent<Text>().color != TrustTextColorRed)
+            animinfo = Shutter.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0);
+        }
+        else
+        {
+            //次失敗したときにゲームオーバーになるときに人気度を揺らす
+            if (Trustarray[TrustLevel] >= TrustPer)
             {
-                TrustText.GetComponent<Text>().color = TrustTextColorRed;
+                ShakeRange = Random.insideUnitSphere;
+                TrustTextTransform.position = TrustTextPosition + ShakeRange * ShakePowerText;
+                TrustPerTransform.localPosition = TrustPerPosotion + ShakeRange * ShakePowerPer;
+                if (TrustText.GetComponent<Text>().color != TrustTextColorRed)
+                {
+                    TrustText.GetComponent<Text>().color = TrustTextColorRed;
+                }
             }
-        }else if(TrustText.GetComponent<Text>().color != TrustTextColorGreen)
-        {
-            TrustText.GetComponent<Text>().color = TrustTextColorGreen;
+            else if (TrustText.GetComponent<Text>().color != TrustTextColorGreen)
+            {
+                TrustText.GetComponent<Text>().color = TrustTextColorGreen;
+            }
+
+            switch (ProcessFlg)
+            {
+                case (int)Process.MAINPROCESS://スムージーを作る時間
+                    MainProcess();
+                    break;
+
+                case (int)Process.BONUSTIME://ボーナスタイム
+                    BonusTime();
+                    break;
+
+                case (int)Process.FADEINPROCESS://ミキサーのフェードイン処理
+                    MixerFadeInProcess();
+                    break;
+
+                case (int)Process.FADEOUTPROCESS://ミキサーのフェードアウト処理
+                                                 //BlaColor.a = 0;
+                    MixerFadeOutProcess();
+                    break;
+
+                case (int)Process.CUSTOMERIN://お客さん入店
+                    if (CustomerInflg)
+                    {
+                        CustomerIN();
+                    }
+                    break;
+
+                case (int)Process.CUSTOMEROUT://お客さん退店
+                    CustomerOUT();
+                    break;
+
+                case (int)Process.COMMENT://お客さんのコメント
+                    if (CommentFlg)
+                    {
+                        CommentTime();
+                    }
+                    break;
+
+                case (int)Process.PERFORMANCETIME://注文の切り替え
+                    if (Performanceflg)
+                    {
+                        PerformanceTime();
+                    }
+                    break;
+            }
+            //回転速度分、ミキサーを回転させる
+            MixerImage.transform.Rotate(0, 0, rotSpeed);
+
+            //ルーレットを減速させ、一定速度以下なら0にする
+            if (rotSpeed > 1)
+            {
+                rotSpeed *= SPEEDDOWN;
+            }
+            else if (rotSpeed > 0 && rotSpeed != 0)
+            {
+                rotSpeed = 0;
+            }
+
         }
-
-        switch (ProcessFlg)
-        {
-            case (int)Process.MAINPROCESS://スムージーを作る時間
-                MainProcess();
-                break;
-
-            case (int)Process.BONUSTIME://ボーナスタイム
-                BonusTime();
-                break;
-
-            case (int)Process.FADEINPROCESS://ミキサーのフェードイン処理
-                MixerFadeInProcess();
-                break;
-
-            case (int)Process.FADEOUTPROCESS://ミキサーのフェードアウト処理
-                //BlaColor.a = 0;
-                MixerFadeOutProcess();
-                break;
-
-            case (int)Process.CUSTOMERIN://お客さん入店
-                if (CustomerInflg)
-                {
-                    CustomerIN();
-                }
-                break;
-
-            case (int)Process.CUSTOMEROUT://お客さん退店
-                CustomerOUT();
-                break;
-
-            case (int)Process.COMMENT://お客さんのコメント
-                if (CommentFlg)
-                {
-                    CommentTime();
-                }
-                break;
-
-            case (int)Process.PERFORMANCETIME://注文の切り替え
-                if (Performanceflg)
-                {
-                    PerformanceTime();
-                }
-                break;
-        }
-        //回転速度分、ミキサーを回転させる
-        MixerImage.transform.Rotate(0, 0, rotSpeed);
-
-        //ルーレットを減速させ、一定速度以下なら0にする
-        if (rotSpeed > 1)
-        {
-            rotSpeed *= SPEEDDOWN;
-        }
-        else if (rotSpeed > 0 && rotSpeed != 0)
-        {
-            rotSpeed = 0;
-        }
-
-
     }
 
     private void MainProcess()
@@ -485,7 +483,6 @@ public class ObjectCount : MonoBehaviour {
             if (TrustPer <= 0)
             {
                 TrustPer = 0;
-                Debug.Log("GameOver");
             }
 
             FoodObject.text = Badcomment[Random.Range(0,7)];
@@ -673,6 +670,12 @@ public class ObjectCount : MonoBehaviour {
             {
                 ProcessFlg = (int)Process.FADEINPROCESS;//ミキサーのフェードイン処理に移行
                 MixerImage.SetActive(true);
+            }
+            else if(TrustPer == 0)//ゲームオーバー処理
+            {
+                animflg.SetBool("Down",true);
+                ProcessFlg = 99;
+                //SceneManager.LoadScene("Result");
             }
             else
             {
