@@ -7,10 +7,13 @@ public class Sceneschange : MonoBehaviour
 {
         public void change()
     {
+        SceneManager.LoadScene("GameMain_Scene");
+        /*
         if (Input.GetMouseButtonDown(0))
         {
             SceneManager.LoadScene("GameMain_Scene");
         }
+        */
     }
        
 // Use this for initialization
