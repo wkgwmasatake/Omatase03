@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/kouta/Title_Scene.unity
     guid: 8ec9a1e721c4f92429733126f442fbda
   - enabled: 1
-    path: Assets/kazuki/Help.unity
+    path: Assets/kazuki/Help_Scene.unity
     guid: 399bede1b0780ab439e89c56caaaf165
   - enabled: 1
     path: Assets/masatake/GameMain_Scene.unity
