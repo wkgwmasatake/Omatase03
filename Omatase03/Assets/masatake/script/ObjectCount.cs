@@ -742,17 +742,18 @@ public class ObjectCount : MonoBehaviour {
                 FeverBGM.Play();
                 MainBGM.Pause();
             }
+            else if (TrustPer <= 0)//ゲームオーバー処理
+            {
+                animflg.SetBool("Down", true);
+                ProcessFlg = 99;
+                MainBGM.Stop();
+                //SceneManager.LoadScene("Result");
+            }
+
             else if (SmoothieCount % ALLFOOD == 1 && SmoothieCount != 1)
             {
                 ProcessFlg = (int)Process.FADEINPROCESS;//ミキサーのフェードイン処理に移行
                 MixerImage.SetActive(true);
-            }
-            else if(TrustPer <= 0)//ゲームオーバー処理
-            {
-                animflg.SetBool("Down",true);
-                ProcessFlg = 99;
-                MainBGM.Stop();
-                //SceneManager.LoadScene("Result");
             }
             else
             {
