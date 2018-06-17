@@ -12,14 +12,12 @@ public class DestroyObject : MonoBehaviour {
 
     float ScaleX,ScaleY;//オブジェクトのスケールを保存する変数
 
-
     // Use this for initialization
     void Start () {
         position = this.transform.position;//生成したときに自分の位置を保存
         this.ResetMethod = GameObject.Find("ResetButton").GetComponent<FoodReset>();
-        ScaleX = this.transform.localScale.x;
-        ScaleY = this.transform.localScale.y;
-        this.transform.localScale = new Vector3(0, 0, 1);
+        ScaleX = this.transform.localScale.x;//自分の大きさを保存
+        this.transform.localScale = new Vector3(0, 0, 1);//自分の大きさを0に変更
 	}
 	
 	// Update is called once per frame
@@ -31,7 +29,7 @@ public class DestroyObject : MonoBehaviour {
             Destroy(gameObject);
         }
 
-        if(ScaleX > this.transform.localScale.x)
+        if(ScaleX > this.transform.localScale.x)//生成時に食材がだんだん大きくなる
         {
             this.transform.localScale += new Vector3(0.05f, 0.05f, 0);
         }
