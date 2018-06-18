@@ -136,6 +136,8 @@ public class ObjectCount : MonoBehaviour {
     AudioSource FoodMixerShootSE;
     AudioSource OrderNG_SE;
     AudioSource OrderOK_SE;
+    bool ShutterSEflg = true;//シャッター音を1回だけ再生させるための変数
+    AudioSource ShutterSE;
 
 
     // Use this for initialization
@@ -280,6 +282,7 @@ public class ObjectCount : MonoBehaviour {
         FoodMixerShootSE = AudioSound[2];
         OrderNG_SE = AudioSound[3];
         OrderOK_SE = AudioSound[4];
+        ShutterSE = AudioSound[5];
 
         AmountText.text = this.TotalAmount.ToString("F0") + "円";//合計金額
 
@@ -292,6 +295,11 @@ public class ObjectCount : MonoBehaviour {
         if (animinfo.normalizedTime < 1.0f)//シャッターのアニメーション
         {
             animinfo = Shutter.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0);
+            if (animinfo.normalizedTime > 0.1f && ShutterSEflg)
+            {
+                ShutterSE.PlayOneShot(ShutterSE.clip);
+                ShutterSEflg = false;
+            }
         }
         else
         {
@@ -704,7 +712,7 @@ public class ObjectCount : MonoBehaviour {
         if (CustomerImage[W].transform.localPosition.x < CustomerInPosition[W])
         {
             CustomerRigid[W].velocity = new Vector2(3, 0);
-            if(MainBGM.volume < 1)
+            if(SmoothieCount % ALLFOOD == 1 && SmoothieCount != 1 && MainBGM.volume < 1)
             {
                 MainBGM.volume += 0.027f;
             }
@@ -747,6 +755,7 @@ public class ObjectCount : MonoBehaviour {
                 animflg.SetBool("Down", true);
                 ProcessFlg = 99;
                 MainBGM.Stop();
+                ShutterSE.PlayOneShot(ShutterSE.clip);
                 //SceneManager.LoadScene("Result");
             }
 
