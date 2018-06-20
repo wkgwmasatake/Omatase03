@@ -91,7 +91,7 @@ public class ObjectCount : MonoBehaviour {
     private int playerflg = 99;//同上(プレイヤーが持っている種類)
     private bool Performanceflg = true;//PerformanceTime()に1回だけ入るための関数
     public int SmoothieCount = 0;//完成させたスムージーの数
-    public int TotalAmount = 0;//売上金額(入れた食材の数*100円)
+    public static int TotalAmount;//売上金額(入れた食材の数*100円)
     int TrustPer = 100;//信頼度
     int[] Trustarray = { 25, 50,75 };//信頼度のレベルに応じた信頼度の減り方
     int TrustLevel = 0;//信頼度のレベル(隠しステータス)
@@ -284,7 +284,8 @@ public class ObjectCount : MonoBehaviour {
         OrderOK_SE = AudioSound[4];
         ShutterSE = AudioSound[5];
 
-        AmountText.text = this.TotalAmount.ToString("F0") + "円";//合計金額
+        TotalAmount = 0;
+        AmountText.text = TotalAmount.ToString("F0") + "円";//合計金額
 
         TrustText.text = this.TrustPer.ToString("F0") + "％";//信頼度
     }
@@ -381,7 +382,6 @@ public class ObjectCount : MonoBehaviour {
             {
                 rotSpeed = 0;
             }
-
         }
     }
 
@@ -542,7 +542,7 @@ public class ObjectCount : MonoBehaviour {
             this.timelimit = ConstTime;
         }
 
-        AmountText.text = this.TotalAmount.ToString("F0") + "円";//合計金額
+        AmountText.text = TotalAmount.ToString("F0") + "円";//合計金額
         PlusMoneyText.text = "＋" + (foodcnt * price).ToString("F0") + "円";
 
         TrustText.text = this.TrustPer.ToString("F0") + "％";//信頼度
@@ -756,7 +756,7 @@ public class ObjectCount : MonoBehaviour {
                 ProcessFlg = 99;
                 MainBGM.Stop();
                 ShutterSE.PlayOneShot(ShutterSE.clip);
-                //SceneManager.LoadScene("Result");
+                Invoke("NextScene", 0.5f);
             }
 
             else if (SmoothieCount % ALLFOOD == 1 && SmoothieCount != 1)
@@ -776,6 +776,15 @@ public class ObjectCount : MonoBehaviour {
         return playerflg;
     }
 
+    public static int ReturnTotalAmount()
+    {
+        return TotalAmount;
+    }
+
+    void NextScene()
+    {
+        SceneManager.LoadScene("result");
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         //円の中に入った時にどのフルーツが入ったか確認する
