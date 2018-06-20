@@ -18,6 +18,8 @@ public class PleaseFade : MonoBehaviour {
     private bool Startflg = false;
     private GameObject Press;
 
+    
+
     // Use this for initialization
     void Start () {
         //色を取得
@@ -27,6 +29,7 @@ public class PleaseFade : MonoBehaviour {
         this.blue = this.Press.GetComponent<Image>().color.b;
         this.shutter = GameObject.Find("Shutter");
         
+
         //this.animation = GameObject.Find("Shutter").GetComponent<Animator>();
 
     }
@@ -60,7 +63,9 @@ public class PleaseFade : MonoBehaviour {
             }
 
             if (Input.GetMouseButtonDown(0)){
+                
                 Press.SetActive (false);
+                
             }
 
         }

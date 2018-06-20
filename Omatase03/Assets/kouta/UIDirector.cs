@@ -9,8 +9,11 @@ public class UIDirector : MonoBehaviour {
      * 変数の宣言
     *****************************/
 
+    int PressActiveFlg = 0;
+
     private float speed = 0.05f;  //透明化の速さ
     private float red, green, blue;    //RGBを操作するための変数
+    
 
     private GameObject Press;
 
@@ -23,7 +26,8 @@ public class UIDirector : MonoBehaviour {
 
     private float ButtonAlpha;      //ボタンのアルファ値
 
-    
+    public AudioClip ChoiceSE;
+    AudioSource Aud;
 
     // Use this for initialization
     void Start () {
@@ -54,17 +58,22 @@ public class UIDirector : MonoBehaviour {
         this.HelpON.SetActive(false);
         this.HelpOFF.SetActive(false);
 
+        this.Aud = GetComponent<AudioSource>();
     }
 	
 	// Update is called once per frame
 	void Update () {
-        if (Press.activeInHierarchy == false)
+        if (Press.activeInHierarchy == false && PressActiveFlg == 0)
         {
+            this.Aud.PlayOneShot(this.ChoiceSE);
+
             this.StartButton.SetActive(true);
             this.RankingButton.SetActive(true);
             this.EndButton.SetActive(true);
             this.HelpON.SetActive(true);
             this.HelpOFF.SetActive(true);
+
+            PressActiveFlg = 1;
         }
         if (StartButton.activeInHierarchy == true)
         {
