@@ -8,21 +8,30 @@ using UnityEngine.SceneManagement;
 public class scoreUI : MonoBehaviour
 {
     public Text ScoreUI;
+    public Text FirstrankUI;
+    public Text SecondrankUI;
+    public Text ThirdrankUI;
+
+    public Text FirstnameUI;
+    public Text SecondnameUI;
+    public Text ThirdnameUI;
+
     public Text FirstscoreUI;
     public Text SecondscoreUI;
     public Text ThirdscoreUI;
+
     public static int Score;
     static string str;
     public InputField inputField;
     public Text text;
-    private int[] Topscore = new int[3];
+    private int[] Toprank = new int[3];
     private string[] Topname = new string[3];
+    private int[] Topscore = new int[3];
     //public SaveScript save;
 
     // Use this for initialization
     void Start()
     {
-
         string a = SceneManager.GetActiveScene().name;
         if(a == "result"){
         Score = sample2.getA();
@@ -38,12 +47,13 @@ public class scoreUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
- 
+
         if (Topscore[0] < Score)
             Topscore[0] = Score;
             //Topname[0] = str;
 
         if (Topscore[1] < Score && Topscore[0] > Score)
+            //Topscore[2] = Topscore[1];
             Topscore[1] = Score;
             //Topname[1] = str;
 
@@ -51,11 +61,23 @@ public class scoreUI : MonoBehaviour
             Topscore[2] = Score;
             //str = Topname[2];
 
+        if(Topscore[2] > Score)
+            SceneManager.LoadScene("Ranking");
+
         
         ScoreUI.text = Score.WithComma() + "円！！";
-        FirstscoreUI.text = "1位: " + Topname[0] + " " + Topscore[0].WithComma() + "円";
-        SecondscoreUI.text = "2位: " + Topname[1] + " " + Topscore[1].WithComma() + "円";
-        ThirdscoreUI.text = "3位: " + Topname[2] + " " + Topscore[2].WithComma() + "円";
+
+        FirstrankUI.text = "1st";
+        SecondrankUI.text = "2rd";
+        ThirdrankUI.text = "3rd";
+
+        FirstnameUI.text = Topname[0];
+        SecondnameUI.text = Topname[1];
+        ThirdnameUI.text = Topname[2];
+
+        FirstscoreUI.text = Topscore[0].WithComma() + "円";
+        SecondscoreUI.text = Topscore[1].WithComma() + "円";
+        ThirdscoreUI.text = Topscore[2].WithComma() + "円";
 
         KeyEntryCheck();
     }
@@ -85,8 +107,8 @@ public class scoreUI : MonoBehaviour
 
     void KeyEntryCheck()
     {
-       // if (Input.GetKeyDown(KeyCode.S) == true) Save();
-       // if (Input.GetKeyDown(KeyCode.D) == true) Reset();
+        if (Input.GetKeyDown(KeyCode.S) == true) Save();
+        if (Input.GetKeyDown(KeyCode.D) == true) Reset();
     }
 
     void GetPrefs()
