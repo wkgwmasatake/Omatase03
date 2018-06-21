@@ -10,7 +10,9 @@ public class GameMainTransition : MonoBehaviour {
      * 変数の宣言
     ***********************************************/
 
-    int AudioFlg = 0;
+    
+
+    private TitleAudio TitleStop;
 
     private Animator ShutterAnim;
     private GameObject Shutter;
@@ -19,8 +21,8 @@ public class GameMainTransition : MonoBehaviour {
 
     public AudioClip ShutterSE;
     AudioSource AudShutter;
-    public AudioClip ChoiceSE;
-    AudioSource Aud;
+    //public AudioClip ChoiceSE;
+    //AudioSource Aud;
 
     // Use this for initialization
     void Start () {
@@ -29,7 +31,10 @@ public class GameMainTransition : MonoBehaviour {
         this.getHelpOn = GameObject.FindGameObjectWithTag("HelpOn");
         this.HelpON = getHelpOn.GetComponent<HelpON>();
 
-        this.Aud = GetComponent<AudioSource>();
+        this.TitleStop = GameObject.Find("TitleAudio").GetComponent<TitleAudio>();
+        
+
+        //this.Aud = GetComponent<AudioSource>();
         this.AudShutter = GetComponent<AudioSource>();
     }
 	
@@ -40,12 +45,14 @@ public class GameMainTransition : MonoBehaviour {
 
     public void StartDown ()
     {
+        
         Invoke("SceneTransition", 1.2f);
         ShutterAnim.SetBool("NextShutter", true);
-        this.Aud.PlayOneShot(this.ChoiceSE);
+        //this.Aud.PlayOneShot(this.ChoiceSE);
         this.AudShutter.PlayOneShot(this.ShutterSE);
+        this.TitleStop.AudioStop();
 
-        AudioFlg = 1;
+        
     }
 
     public void SceneTransition()

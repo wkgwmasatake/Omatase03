@@ -9,18 +9,24 @@ public class Ranking_Rransition : MonoBehaviour {
      * 変数の宣言
     ***********************************************/
 
+    private TitleAudio TitleStop;
+
     private Animator ShutterAnim;
     private GameObject Shutter;
 
-    public AudioClip ChoiceSE;
-    AudioSource Aud;
+    public AudioClip ShutterSE;
+    AudioSource AudShutter;
+   // public AudioClip ChoiceSE;
+    //AudioSource Aud;
 
     // Use this for initialization
     void Start () {
         this.Shutter = GameObject.Find("Shutter");
         ShutterAnim = Shutter.GetComponent<Animator>();
 
-        this.Aud = GetComponent<AudioSource>();
+        //this.Aud = GetComponent<AudioSource>();
+        this.AudShutter = GetComponent<AudioSource>();
+        this.TitleStop = GameObject.Find("TitleAudio").GetComponent<TitleAudio>();
     }
 
     // Update is called once per frame
@@ -32,7 +38,9 @@ public class Ranking_Rransition : MonoBehaviour {
         Invoke("SceneTransition", 1.2f);
         ShutterAnim.SetBool("NextShutter", true);
 
-        this.Aud.PlayOneShot(this.ChoiceSE);
+        //this.Aud.PlayOneShot(this.ChoiceSE);
+        this.AudShutter.PlayOneShot(this.ShutterSE);
+        this.TitleStop.AudioStop();
 
     }
     public void SceneTransition()
