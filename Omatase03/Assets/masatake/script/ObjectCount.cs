@@ -168,15 +168,15 @@ public class ObjectCount : MonoBehaviour {
         CustomerInPosition = new float[4];
         CustomerOutPosition = new float[4];
 
-        CustomerInPosition[0] = -19.53f;
-        CustomerInPosition[1] = -20.78f;
-        CustomerInPosition[2] = -22.28f;
-        CustomerInPosition[3] = -19.96f;
+        CustomerInPosition[0] = -21.8f;
+        CustomerInPosition[1] = -22.6f;
+        CustomerInPosition[2] = -24.3f;
+        CustomerInPosition[3] = -21.4f;
 
-        CustomerOutPosition[0] = -26.18f;
-        CustomerOutPosition[1] = -28.29f;
-        CustomerOutPosition[2] = -28.78f;
-        CustomerOutPosition[3] = -26.46f;
+        CustomerOutPosition[0] = -28.7f;
+        CustomerOutPosition[1] = -32.5f;
+        CustomerOutPosition[2] = -31.5f;
+        CustomerOutPosition[3] = -29.1f;
 
         this.Order = new string[5];
 
