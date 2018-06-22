@@ -246,7 +246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95f8ec4c20e826d4791cc73e036fa947, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShutterSE: {fileID: 8300000, guid: 06524b381a78a5c43ae61f53706aab32, type: 3}
+  ShutterSE: {fileID: 8300000, guid: 1500814975fee96498eea233290a98e6, type: 3}
 --- !u!82 &73633381
 AudioSource:
   m_ObjectHideFlags: 0
@@ -461,7 +461,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea45f6f6b347b72498c3e7da9651d922, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShutterSE: {fileID: 8300000, guid: 06524b381a78a5c43ae61f53706aab32, type: 3}
+  ShutterSE: {fileID: 8300000, guid: 1500814975fee96498eea233290a98e6, type: 3}
 --- !u!82 &249082647
 AudioSource:
   m_ObjectHideFlags: 0
@@ -830,7 +830,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b09e8e9988f74fc4298b709352aca8b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShutterSE: {fileID: 8300000, guid: 06524b381a78a5c43ae61f53706aab32, type: 3}
+  ShutterSE: {fileID: 8300000, guid: 1500814975fee96498eea233290a98e6, type: 3}
 --- !u!82 &352032124
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1867,7 +1867,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8226d5e5adb5904d8bccfaffeccd004, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShutterSE: {fileID: 8300000, guid: 06524b381a78a5c43ae61f53706aab32, type: 3}
+  ShutterSE: {fileID: 8300000, guid: 1500814975fee96498eea233290a98e6, type: 3}
 --- !u!82 &1316740354
 AudioSource:
   m_ObjectHideFlags: 0
