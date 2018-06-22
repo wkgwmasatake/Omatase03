@@ -5,25 +5,23 @@ using UnityEngine;
 public class DestroyObject : MonoBehaviour {
 
     public GameObject[] Temporary;
-    public FoodReset ResetMethod;
+    FoodReset ResetMethod;
     public int count = 0;
     private Vector2 position;
     private bool flg = false;
 
     float ScaleX,ScaleY;//オブジェクトのスケールを保存する変数
 
-
     // Use this for initialization
     void Start () {
         position = this.transform.position;//生成したときに自分の位置を保存
         this.ResetMethod = GameObject.Find("ResetButton").GetComponent<FoodReset>();
-        ScaleX = this.transform.localScale.x;
-        ScaleY = this.transform.localScale.y;
-        this.transform.localScale = new Vector3(0, 0, 1);
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        ScaleX = this.transform.localScale.x;//自分の大きさを保存
+        this.transform.localScale = new Vector3(0, 0, 1);//自分の大きさを0に変更                
+    }
+
+    // Update is called once per frame
+    void Update () {
         if ((flg && Input.GetMouseButtonUp(0)) || ResetMethod.ResetFlg == true)//ミキサーに入ったとき、または、リセットボタンが押されたとき
         {
             GameObject CreateObject = GameObject.Find("position1");
@@ -31,9 +29,24 @@ public class DestroyObject : MonoBehaviour {
             Destroy(gameObject);
         }
 
-        if(ScaleX > this.transform.localScale.x)
+        if (ScaleX > this.transform.localScale.x)//生成時に食材がだんだん大きくなる
         {
-            this.transform.localScale += new Vector3(0.05f, 0.05f, 0);
+            if (transform.name == "ApplePre(Clone)")
+            {
+                this.transform.localScale += new Vector3(0.0125f, 0.0125f);
+            }
+            else if (transform.name == "ScrewPre(Clone)")
+            {
+                this.transform.localScale += new Vector3(0.04f, 0.04f);
+            }
+            else if (transform.name == "SasamiPre(Clone)")
+            {
+                this.transform.localScale += new Vector3(0.035f, 0.035f);
+            }
+            else
+            {
+                this.transform.localScale += new Vector3(0.05f, 0.05f, 0);
+            }
         }
     }
 

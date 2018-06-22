@@ -21,6 +21,11 @@ public class ObjectCount : MonoBehaviour {
     //お客さんの画像
     public GameObject [] CustomerImage;
 
+    //まな板のレンダラーと色の変数
+    public GameObject BoardObject;
+    Renderer BoardRenderer;
+    Color BoardColor;
+
     //ミキサーのレンダラーと色の変数
     Renderer MixRenderer;
     Color MixColor;
@@ -60,7 +65,6 @@ public class ObjectCount : MonoBehaviour {
     Text AmountText;
     Text TrustText;
     Text PlusMoneyText;
-    Text TrustPerText;
 
     GameObject CompletionButton;
     GameObject ResetButton;
@@ -71,14 +75,15 @@ public class ObjectCount : MonoBehaviour {
     public GameObject Shutter;//unity上でアタッチ
     public AnimatorStateInfo animinfo;
 
-    const int REMAINING = 3;
+    //const int REMAINING = 3;
     const int price = 100;//スムージーの単価
-    const int ALLFOOD = 10;//全混ぜスムージーが発動するまでに完成させなければいけないスムージーの個数
+    const int ALLFOOD = 5;//全混ぜスムージーが発動するまでに完成させなければいけないスムージーの個数
     const float InvokeTime = 1.0f;//プレイヤーの待ち時間
     const float ConstTime = 5.0f;//制限時間
     const float ROTSPEED = 20f;//ミキサーを回転させるスピードの初期値
     const float SPEEDDOWN = 0.91f;//ミキサーの減速速度
 
+    private int FoodRemaining = 5;//スムージー完成までに必要なTrustLevelに応じて増えていく)
     private int foodcnt = 0;//食材の残りの数
     private float timelimit = ConstTime;
     private string[] Order;
@@ -86,7 +91,7 @@ public class ObjectCount : MonoBehaviour {
     private int playerflg = 99;//同上(プレイヤーが持っている種類)
     private bool Performanceflg = true;//PerformanceTime()に1回だけ入るための関数
     public int SmoothieCount = 0;//完成させたスムージーの数
-    public int TotalAmount = 0;//売上金額(入れた食材の数*100円)
+    public static int TotalAmount;//売上金額(入れた食材の数*100円)
     int TrustPer = 100;//信頼度
     int[] Trustarray = { 25, 50,75 };//信頼度のレベルに応じた信頼度の減り方
     int TrustLevel = 0;//信頼度のレベル(隠しステータス)
@@ -120,6 +125,21 @@ public class ObjectCount : MonoBehaviour {
     //アニメーションフラグ
     Animator animflg;
 
+    //BGM関連の変数
+    bool Soundflg = true;//最初に1回だけBGMを再生させるための変数
+    AudioSource[] AudioSound;
+    AudioSource MainBGM;
+    AudioSource FeverBGM;
+    float BGMvolume = 0.0101f;//BGMが徐々に減っていく量
+
+    //SE関連の変数
+    AudioSource FoodMixerShootSE;
+    AudioSource OrderNG_SE;
+    AudioSource OrderOK_SE;
+    bool ShutterSEflg = true;//シャッター音を1回だけ再生させるための変数
+    AudioSource ShutterSE;
+
+
     // Use this for initialization
     void Start() {
         this.Timer = GameObject.Find("Timer").GetComponent<Text>();
@@ -148,15 +168,15 @@ public class ObjectCount : MonoBehaviour {
         CustomerInPosition = new float[4];
         CustomerOutPosition = new float[4];
 
-        CustomerInPosition[0] = -21.8f;
-        CustomerInPosition[1] = -22.6f;
-        CustomerInPosition[2] = -24.3f;
-        CustomerInPosition[3] = -21.4f;
+        CustomerInPosition[0] = -19.53f;
+        CustomerInPosition[1] = -20.78f;
+        CustomerInPosition[2] = -22.28f;
+        CustomerInPosition[3] = -19.96f;
 
-        CustomerOutPosition[0] = -28.7f;
-        CustomerOutPosition[1] = -32.5f;
-        CustomerOutPosition[2] = -31.5f;
-        CustomerOutPosition[3] = -29.1f;
+        CustomerOutPosition[0] = -26.18f;
+        CustomerOutPosition[1] = -28.29f;
+        CustomerOutPosition[2] = -28.78f;
+        CustomerOutPosition[3] = -26.46f;
 
         this.Order = new string[5];
 
@@ -188,7 +208,7 @@ public class ObjectCount : MonoBehaviour {
         this.CompletionButton = GameObject.Find("CompletionButton");
         this.ResetButton = GameObject.Find("ResetButton");
 
-        Remaining.text = (REMAINING - this.foodcnt).ToString("F0");
+        Remaining.text = (FoodRemaining - this.foodcnt).ToString("F0");
         Timer.text = this.timelimit.ToString("F1");
 
         this.MixerImage = GameObject.Find("test");
@@ -212,6 +232,10 @@ public class ObjectCount : MonoBehaviour {
         AlienColor.a = 0;
 
         AlienRenderer.material.color = AlienColor;//変更したアルファ値を反映させる
+
+        //まな板のRGB値を取得
+        BoardRenderer = BoardObject.GetComponent<Renderer>();
+        BoardColor = BoardRenderer.material.color;
 
         //合計金額に加算するときのテキストのRGB値を取得
         PlusColor = PlusMoneyText.GetComponent<Text>().color;
@@ -251,7 +275,17 @@ public class ObjectCount : MonoBehaviour {
         animinfo = Shutter.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0);
         animflg = Shutter.GetComponent<Animator>();
 
-        AmountText.text = this.TotalAmount.ToString("F0") + "円";//合計金額
+        //BGM・SE関連の初期化
+        AudioSound = GetComponents<AudioSource>();
+        MainBGM = AudioSound[0];
+        FeverBGM = AudioSound[1];
+        FoodMixerShootSE = AudioSound[2];
+        OrderNG_SE = AudioSound[3];
+        OrderOK_SE = AudioSound[4];
+        ShutterSE = AudioSound[5];
+
+        TotalAmount = 0;
+        AmountText.text = TotalAmount.ToString("F0") + "円";//合計金額
 
         TrustText.text = this.TrustPer.ToString("F0") + "％";//信頼度
     }
@@ -259,12 +293,23 @@ public class ObjectCount : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        if (animinfo.normalizedTime < 1.0f)
+        if (animinfo.normalizedTime < 1.0f)//シャッターのアニメーション
         {
             animinfo = Shutter.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0);
+            if (animinfo.normalizedTime > 0.1f && ShutterSEflg)
+            {
+                ShutterSE.PlayOneShot(ShutterSE.clip);
+                ShutterSEflg = false;
+            }
         }
         else
         {
+            if (Soundflg)
+            {
+                MainBGM.Play();
+                Soundflg = false;
+            }
+
             //次失敗したときにゲームオーバーになるときに人気度を揺らす
             if (Trustarray[TrustLevel] >= TrustPer)
             {
@@ -337,7 +382,6 @@ public class ObjectCount : MonoBehaviour {
             {
                 rotSpeed = 0;
             }
-
         }
     }
 
@@ -348,6 +392,7 @@ public class ObjectCount : MonoBehaviour {
             foodcnt++;
             playerflg = 99;
             rotSpeed = ROTSPEED;
+            FoodMixerShootSE.PlayOneShot(FoodMixerShootSE.clip);
         }
         else if (foodflg != playerflg && playerflg != 99 && Input.GetMouseButtonUp(0))//注文とミキサーに入れたものが違うとき
         {
@@ -357,9 +402,9 @@ public class ObjectCount : MonoBehaviour {
 
         TimeCount();//時間の取得
 
-        if ((REMAINING - foodcnt) > 0)//食材の残りの数の表示
+        if ((FoodRemaining - foodcnt) > 0)//食材の残りの数の表示
         {
-            Remaining.text = (REMAINING - this.foodcnt).ToString("F0");
+            Remaining.text = (FoodRemaining - this.foodcnt).ToString("F0");
         }
         else
         {
@@ -403,6 +448,8 @@ public class ObjectCount : MonoBehaviour {
                 TrustLevel++;//信頼度のレベルを上げる
             }
 
+            FoodRemaining++;
+
             Invoke("CursleFlagChange", InvokeTime);
         }
         else
@@ -419,9 +466,6 @@ public class ObjectCount : MonoBehaviour {
             CustomerInflg = true;//お客さんの入店を許可する
             ProcessFlg = (int)Process.CUSTOMERIN;//お客さんの入店
         }
-
-        //Debug.Log(Order[foodflg]);
-        //Debug.Log(foodcnt);
     }
 
     private void PerformanceTime()
@@ -451,11 +495,9 @@ public class ObjectCount : MonoBehaviour {
 
     public void OrderReset()//注文の切り替え
     {
-        this.timelimit = ConstTime;//制限時間のリセット
-
         CompletionButton.GetComponent<Completion>().InteractableChangeFalse();//完成ボタンを押せなくする
 
-        if ((foodflg < 99 && REMAINING <= foodcnt) || ProcessFlg == (int)Process.BONUSTIME)//注文のスムージーが完成したとき
+        if ((foodflg < 99 && FoodRemaining <= foodcnt) || ProcessFlg == (int)Process.BONUSTIME)//注文のスムージーが完成したとき
         {
             SmoothieCount++;
             TrustPer += 10;//信頼度の回復
@@ -473,29 +515,39 @@ public class ObjectCount : MonoBehaviour {
             }
             else
             {
-                FoodObject.text = Goodcomment[Random.Range(0, 7)];//完成させたときのコメント
+                FoodObject.text = Goodcomment[Random.Range(0, 7)];//完成させたときのコメント            
+                OrderOK_SE.PlayOneShot(OrderOK_SE.clip);//注文成功のSE
             }
         }
         else//注文と違う食材を入れたとき
         {
             TrustPer -= Trustarray[TrustLevel];
 
-            if (TrustPer <= 0)
+            if (TrustPer < 0)
             {
                 TrustPer = 0;
             }
 
-            FoodObject.text = Badcomment[Random.Range(0,7)];
+            FoodObject.text = Badcomment[Random.Range(0,7)];//失敗したときのコメント
+
+            OrderNG_SE.PlayOneShot(OrderNG_SE.clip);
         }
 
-        AmountText.text = this.TotalAmount.ToString("F0") + "円";//合計金額
+        if (SmoothieCount % ALLFOOD == 0 && SmoothieCount != 0)//制限時間のリセット(フィーバータイムの時のみ時間を9.9秒にする)
+        {
+            this.timelimit = 9.9f;
+        }
+        else
+        {
+            this.timelimit = ConstTime;
+        }
+
+        AmountText.text = TotalAmount.ToString("F0") + "円";//合計金額
         PlusMoneyText.text = "＋" + (foodcnt * price).ToString("F0") + "円";
 
         TrustText.text = this.TrustPer.ToString("F0") + "％";//信頼度
 
         Debug.Log(SmoothieCount);
-        //Debug.Log("TimeReset");
-        //Debug.Log(timelimit);
 
         //Cursor.lockState = CursorLockMode.Locked;//カーソルをロック
         CursorLock = false;
@@ -509,14 +561,14 @@ public class ObjectCount : MonoBehaviour {
     void CommentTime()
     {
 
-        if(REMAINING > foodcnt || foodflg > 4)
+        if(FoodRemaining > foodcnt || foodflg > 4)
         {
             Invoke("NextProcess", 0.9f);
             CommentFlg = false;
         }
         else if(PlusColor.a > 0)
         {
-            PlusMoneyText.transform.Translate(0, 0.2f, 0);
+            PlusMoneyText.transform.Translate(0, 0.005f, 0);
             PlusColor.a -= 0.02f;
             PlusMoneyText.color = PlusColor;
         }
@@ -539,6 +591,7 @@ public class ObjectCount : MonoBehaviour {
         {
             foodcnt++;
             playerflg = 99;
+            FoodMixerShootSE.PlayOneShot(FoodMixerShootSE.clip);
         }
 
         TimeCount();//時間の取得
@@ -564,17 +617,30 @@ public class ObjectCount : MonoBehaviour {
         Remaining.text = "∞";
     }
 
-    private void MixerFadeInProcess()//ミキサーのフェードイン処理、ブラックホールと宇宙人のフェードアウト処理
+    private void MixerFadeInProcess()//ミキサーとまな板のフェードイン処理、ブラックホールと宇宙人のフェードアウト処理
     {
-        //ミキサーとブラックホールと宇宙人の同時フェード処理
+        //ミキサーとブラックホールと宇宙人とまな板の同時フェード処理
         if (MixColor.a < 1.0f)
         {
             MixColor.a += speed;
+            BoardColor.a += speed;
             BlaColor.a -= speed;
             AlienColor.a -= speed;
+
             MixRenderer.material.color = MixColor;
+            BoardRenderer.material.color = BoardColor;
             BlaRenderer.material.color = BlaColor;
             AlienRenderer.material.color = AlienColor;
+
+            if(FeverBGM.volume > 0)
+            {
+                FeverBGM.volume -= BGMvolume;
+            }
+            else
+            {
+                FeverBGM.Stop();
+                MainBGM.UnPause();
+            }
         }
         else
         {
@@ -599,7 +665,7 @@ public class ObjectCount : MonoBehaviour {
 
     }
 
-    private void MixerFadeOutProcess()//ミキサーのフェードアウト処理、ブラックホールと宇宙人ののフェードイン処理
+    private void MixerFadeOutProcess()//ミキサーとまな板のフェードアウト処理、ブラックホールと宇宙人ののフェードイン処理
     {
         ////ミキサーとブラックホールの同時フェード処理
         //if (MixColor.a > 0)
@@ -614,11 +680,14 @@ public class ObjectCount : MonoBehaviour {
         //    ProcessFlg = (int)Process.PERFORMANCETIME;
         //}
 
-        //先にミキサーがフェードアウト処理、その後ブラックホールと宇宙人のフェードイン処理
+        //先にミキサーとまな板がフェードアウト処理、その後ブラックホールと宇宙人のフェードイン処理
         if (MixColor.a > 0)
         {
             MixColor.a -= speed;
+            BoardColor.a -= speed;
+
             MixRenderer.material.color = MixColor;
+            BoardRenderer.material.color = BoardColor;
         }
         else if (BlaColor.a < 1.0f)
         {
@@ -626,6 +695,10 @@ public class ObjectCount : MonoBehaviour {
             AlienColor.a += speed;
             BlaRenderer.material.color = BlaColor;
             AlienRenderer.material.color = AlienColor;
+            if (FeverBGM.volume < 1)
+            {
+                FeverBGM.volume += BGMvolume;
+            }
         }
         else
         {
@@ -639,6 +712,10 @@ public class ObjectCount : MonoBehaviour {
         if (CustomerImage[W].transform.localPosition.x < CustomerInPosition[W])
         {
             CustomerRigid[W].velocity = new Vector2(3, 0);
+            if(SmoothieCount % ALLFOOD == 1 && SmoothieCount != 1 && MainBGM.volume < 1)
+            {
+                MainBGM.volume += 0.027f;
+            }
         }
         else
         {
@@ -655,6 +732,11 @@ public class ObjectCount : MonoBehaviour {
         if (CustomerImage[W].transform.localPosition.x > CustomerOutPosition[W])
         {
             CustomerRigid[W].velocity = new Vector2(-3, 0);
+
+            if (SmoothieCount % ALLFOOD == 0 && SmoothieCount != 0 && MainBGM.volume > 0)//次がフィーバータイムならBGMをフェードアウト
+            {
+                MainBGM.volume -= 0.027f;
+            }
         }
         else
         {
@@ -665,17 +747,22 @@ public class ObjectCount : MonoBehaviour {
             {
                 ProcessFlg = (int)Process.FADEOUTPROCESS;//ミキサーのフェードアウト処理に移行
                 BlackHoleImage.SetActive(true);
+                FeverBGM.Play();
+                MainBGM.Pause();
             }
+            else if (TrustPer <= 0)//ゲームオーバー処理
+            {
+                animflg.SetBool("Down", true);
+                ProcessFlg = 99;
+                MainBGM.Stop();
+                ShutterSE.PlayOneShot(ShutterSE.clip);
+                Invoke("NextScene", 0.5f);
+            }
+
             else if (SmoothieCount % ALLFOOD == 1 && SmoothieCount != 1)
             {
                 ProcessFlg = (int)Process.FADEINPROCESS;//ミキサーのフェードイン処理に移行
                 MixerImage.SetActive(true);
-            }
-            else if(TrustPer == 0)//ゲームオーバー処理
-            {
-                animflg.SetBool("Down",true);
-                ProcessFlg = 99;
-                //SceneManager.LoadScene("Result");
             }
             else
             {
@@ -684,6 +771,20 @@ public class ObjectCount : MonoBehaviour {
         }
     }
 
+    public int ReturnPlayerFlg()
+    {
+        return playerflg;
+    }
+
+    public static int ReturnTotalAmount()
+    {
+        return TotalAmount;
+    }
+
+    void NextScene()
+    {
+        SceneManager.LoadScene("result");
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         //円の中に入った時にどのフルーツが入ったか確認する

@@ -9,6 +9,10 @@ public class MouseOpereter : MonoBehaviour
 
     ObjectCount CursorLock;
 
+    AudioSource [] FoodSE;//GetComponentするための変数
+    AudioSource FoodDropSE;//食材をミキサー以外のところで離したときのSE
+    AudioSource FoodGrabSE;//食材をつかんだ時のSE
+
     void OnMouseDown()
     {
         //カメラから見たオブジェクトの現在位置を画面位置座標に変換
@@ -17,6 +21,11 @@ public class MouseOpereter : MonoBehaviour
         //取得したscreenpointの値を変数に格納
         float posx = Input.mousePosition.x;
         float posy = Input.mousePosition.y;
+
+        if (CursorLock.CursorLock)
+        {
+            FoodGrabSE.PlayOneShot(FoodGrabSE.clip);
+        }
 
         offset = transform.position - Camera.main.ScreenToWorldPoint(new Vector3(posx, posy, 0));
     }
@@ -42,11 +51,22 @@ public class MouseOpereter : MonoBehaviour
         transform.position = currentPosition;
     }
 
+    private void OnMouseUp()
+    {
+        if(CursorLock.CursorLock && CursorLock.ReturnPlayerFlg() == 99)
+        {
+            FoodDropSE.PlayOneShot(FoodDropSE.clip);
+        }
+    }
+
     //Use this for initialization
     void Start()
     {
         Input.multiTouchEnabled = false;//マルチタッチを無効化
         this.CursorLock = GameObject.Find("Mixer").GetComponent<ObjectCount>();//ObjectCountスクリプトを取得
+        this.FoodSE = GetComponents<AudioSource>();
+        this.FoodDropSE = FoodSE[0];
+        this.FoodGrabSE = FoodSE[1];
     }
 
     //// Update is called once per frame
