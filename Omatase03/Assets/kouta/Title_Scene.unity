@@ -2243,7 +2243,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1550463557}
+      - m_Target: {fileID: 1074212896}
         m_MethodName: CreditDown
         m_Mode: 1
         m_Arguments:
@@ -2300,7 +2300,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c6e304c89754114e95b0bbee5ab0194, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChoiceSE: {fileID: 8300000, guid: 6f58b817040664a4fa6d4f3731e3e029, type: 3}
 --- !u!82 &1550463558
 AudioSource:
   m_ObjectHideFlags: 0

@@ -9,6 +9,10 @@ public class UIDirector : MonoBehaviour {
      * 変数の宣言
     *****************************/
 
+    int CreditFlg = 1;
+
+    private GameObject CreditImage;
+
     int PressActiveFlg = 0;
 
     private float speed = 0.05f;  //透明化の速さ
@@ -32,6 +36,11 @@ public class UIDirector : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+
+        this.CreditImage = GameObject.Find("CreditImage");
+
+        this.CreditImage.SetActive(false);
+
         //色を取得
         this.Press = GameObject.Find("PRESS");
         this.red = this.Press.GetComponent<Image>().color.r;
@@ -90,6 +99,22 @@ public class UIDirector : MonoBehaviour {
             this.Credit.GetComponent<Image>().color = new Color(this.red, this.green, this.blue, this.ButtonAlpha);
             ButtonAlpha += speed;
             //Debug.Log(ButtonAlpha);
+        }
+    }
+
+    public void CreditDown()
+    {
+        this.Aud.PlayOneShot(this.ChoiceSE);
+
+        if (CreditFlg == 0)
+        {
+            this.CreditImage.SetActive(false);
+            CreditFlg = 1;
+        }
+        else if (CreditFlg == 1)
+        {
+            this.CreditImage.SetActive(true);
+            CreditFlg = 0;
         }
     }
 }
