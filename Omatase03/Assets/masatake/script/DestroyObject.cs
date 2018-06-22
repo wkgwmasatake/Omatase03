@@ -31,7 +31,22 @@ public class DestroyObject : MonoBehaviour {
 
         if(ScaleX > this.transform.localScale.x)//生成時に食材がだんだん大きくなる
         {
-            this.transform.localScale += new Vector3(0.05f, 0.05f, 0);
+            if (transform.name == "ApplePre(Clone)")
+            {
+                this.transform.localScale += new Vector3(0.0125f, 0.0125f);
+            }
+            else if (transform.name == "ScrewPre(Clone)")
+            {
+                this.transform.localScale += new Vector3(0.04f, 0.04f);
+            }
+            else if (transform.name == "SasamiPre(Clone)")
+            {
+                this.transform.localScale += new Vector3(0.035f, 0.035f);
+            }
+            else
+            {
+                this.transform.localScale += new Vector3(0.05f, 0.05f, 0);
+            }
         }
     }
 
