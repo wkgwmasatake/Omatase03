@@ -15,7 +15,7 @@ public  class SaveScript : MonoBehaviour{
         //text.text = str;
         str = txt;
         inputField.text = "";
-        Debug.Log("nameimput");
+        //Debug.Log("nameimput");
         
     }
 

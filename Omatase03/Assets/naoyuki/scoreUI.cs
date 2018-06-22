@@ -65,7 +65,7 @@ public class scoreUI : MonoBehaviour
             SceneManager.LoadScene("Ranking");
 
 
-        ScoreUI.text = TotalAmount.WithComma() + "円！！";
+        ScoreUI.text = TotalAmount.WithComma();
 
         FirstrankUI.text = "1st";
         SecondrankUI.text = "2rd";
