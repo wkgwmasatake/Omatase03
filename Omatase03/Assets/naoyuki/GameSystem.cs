@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
 public class GameSystem : MonoBehaviour
 {
-
     public void SceneMove()
     {
 
-        SceneManager.LoadScene("result");
+            SceneManager.LoadScene("result");
     }
     // Use this for initialization
     void Start()
