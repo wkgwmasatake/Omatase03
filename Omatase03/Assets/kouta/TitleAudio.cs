@@ -7,8 +7,7 @@ public class TitleAudio : MonoBehaviour {
      * 変数の宣言
     *****************************/
 
-    int TitleFlg = 0;
-    public AudioClip TitleBGM;
+    
     AudioSource Aud;
 
     // Use this for initialization
@@ -18,11 +17,11 @@ public class TitleAudio : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if(TitleFlg == 0)
-        {
-            this.Aud.PlayOneShot(this.TitleBGM);
-            TitleFlg = 1;
-        }
+           
 
+    }
+    public void AudioStop()
+    {
+        Aud.Stop();
     }
 }

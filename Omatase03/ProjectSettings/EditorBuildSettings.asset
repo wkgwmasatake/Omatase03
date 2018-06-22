@@ -14,3 +14,18 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/masatake/GameMain_Scene.unity
     guid: 08ee9c3efb3ca0b44b76d487550f25e3
+  - enabled: 1
+    path: Assets/naoyuki/Score.unity
+    guid: bc278c859b4151c429cfd012b194b1df
+  - enabled: 1
+    path: Assets/naoyuki/result.unity
+    guid: e6f71cd5237265140b748b4d916be505
+  - enabled: 1
+    path: Assets/naoyuki/Ranking.unity
+    guid: 152244f5855414ac4a3874f14efa583c
+  - enabled: 1
+    path: Assets/naoyuki/Title.unity
+    guid: 2176d36cdcc02b141965c186bf754c83
+  - enabled: 1
+    path: Assets/naoyuki/Tranking.unity
+    guid: 95ba79118b871ba489a49909e2f13011
