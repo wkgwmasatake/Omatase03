@@ -45,6 +45,6 @@ public class Ranking_Rransition : MonoBehaviour {
     }
     public void SceneTransition()
     {
-        SceneManager.LoadScene("Ranking_Scene");
+        SceneManager.LoadScene("Tranking");
     }
 }

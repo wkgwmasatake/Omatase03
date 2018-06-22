@@ -8,7 +8,7 @@ public class GameSystem4 : MonoBehaviour {
     public void SceneMove()
     {
 
-        SceneManager.LoadScene("Title");
+        SceneManager.LoadScene("Title_Scene");
     }
 
 	// Use this for initialization

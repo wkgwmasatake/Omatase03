@@ -8,7 +8,7 @@ public class GameSystem3 : MonoBehaviour {
     public void SceneMove()
     {
 
-        SceneManager.LoadScene("Score");
+        SceneManager.LoadScene("GameMain_Scene");
     }
 
 	// Use this for initialization

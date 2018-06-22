@@ -20,7 +20,7 @@ public class scoreUI : MonoBehaviour
     public Text SecondscoreUI;
     public Text ThirdscoreUI;
 
-    public static int Score;
+    public static int TotalAmount;
     static string str;
     public InputField inputField;
     public Text text;
@@ -34,7 +34,7 @@ public class scoreUI : MonoBehaviour
     {
         string a = SceneManager.GetActiveScene().name;
         if(a == "result"){
-        Score = sample2.getA();
+            TotalAmount = ObjectCount.getA();
         str = SaveScript.getB();
         }
 
@@ -48,24 +48,24 @@ public class scoreUI : MonoBehaviour
     void Update()
     {
 
-        if (Topscore[0] < Score)
-            Topscore[0] = Score;
+        if (Topscore[0] < TotalAmount)
+            Topscore[0] = TotalAmount;
             //Topname[0] = str;
 
-        if (Topscore[1] < Score && Topscore[0] > Score)
+        if (Topscore[1] < TotalAmount && Topscore[0] > TotalAmount)
             //Topscore[2] = Topscore[1];
-            Topscore[1] = Score;
+            Topscore[1] = TotalAmount;
             //Topname[1] = str;
 
-        if (Topscore[2] < Score && Topscore[1] > Score)
-            Topscore[2] = Score;
+        if (Topscore[2] < TotalAmount && Topscore[1] > TotalAmount)
+            Topscore[2] = TotalAmount;
             //str = Topname[2];
 
-        if(Topscore[2] > Score)
+        if (Topscore[2] > TotalAmount)
             SceneManager.LoadScene("Ranking");
 
-        
-        ScoreUI.text = Score.WithComma() + "円！！";
+
+        ScoreUI.text = TotalAmount.WithComma() + "円！！";
 
         FirstrankUI.text = "1st";
         SecondrankUI.text = "2rd";
@@ -75,9 +75,9 @@ public class scoreUI : MonoBehaviour
         SecondnameUI.text = Topname[1];
         ThirdnameUI.text = Topname[2];
 
-        FirstscoreUI.text = Topscore[0].WithComma() + "円";
-        SecondscoreUI.text = Topscore[1].WithComma() + "円";
-        ThirdscoreUI.text = Topscore[2].WithComma() + "円";
+        FirstscoreUI.text = Topscore[0].WithComma();
+        SecondscoreUI.text = Topscore[1].WithComma();
+        ThirdscoreUI.text = Topscore[2].WithComma();
 
         KeyEntryCheck();
     }

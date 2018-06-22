@@ -814,4 +814,8 @@ public class ObjectCount : MonoBehaviour {
             playerflg = 99;
         }
     }
+    public static int getA()
+    {
+        return TotalAmount;
+    }
 }
