@@ -105,7 +105,28 @@ public class scoreUI : MonoBehaviour
     void Update()
     {
 
+<<<<<<< HEAD
             ScoreUI.text = TotalAmount.WithComma();
+=======
+        if (Topscore[0] < TotalAmount)
+            Topscore[0] = TotalAmount;
+            //Topname[0] = str;
+
+        if (Topscore[1] < TotalAmount && Topscore[0] > TotalAmount)
+            //Topscore[2] = Topscore[1];
+            Topscore[1] = TotalAmount;
+            //Topname[1] = str;
+
+        if (Topscore[2] < TotalAmount && Topscore[1] > TotalAmount)
+            Topscore[2] = TotalAmount;
+            //str = Topname[2];
+
+        if (Topscore[2] > TotalAmount)
+            SceneManager.LoadScene("Ranking");
+
+
+        ScoreUI.text = TotalAmount.WithComma();
+>>>>>>> ce79fbd8f368a78c37a02d6455567b419d43e23d
 
             FirstrankUI.text = "1st";
             SecondrankUI.text = "2rd";
