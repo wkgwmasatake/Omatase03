@@ -9,6 +9,7 @@ public class GameSystem2 : MonoBehaviour
     public void SceneMove()
     {
         SceneManager.LoadScene("ranking");
+       
     }
     // Use this for initialization
     void Start()

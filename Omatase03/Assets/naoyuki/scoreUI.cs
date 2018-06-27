@@ -24,9 +24,13 @@ public class scoreUI : MonoBehaviour
     static string str;
     public InputField inputField;
     public Text text;
+    string RankStr;
     private int[] Toprank = new int[3];
     private string[] Topname = new string[3];
     private int[] Topscore = new int[3];
+    public static int Rank;
+
+    string a;
     //public SaveScript save;
 
     // Use this for initialization
@@ -35,12 +39,65 @@ public class scoreUI : MonoBehaviour
         string a = SceneManager.GetActiveScene().name;
         if(a == "result"){
             TotalAmount = ObjectCount.getA();
-        str = SaveScript.getB();
+            Debug.Log("TotalAmount = " + TotalAmount);
+            str = SaveScript.getB();
         }
 
         GetPrefs();
 
         SetDefaultData();
+
+        if (a == "result")
+        {
+            if (Topscore[0] < TotalAmount)
+            {
+                Debug.Log("1st");
+                //スコア上書き
+                Topscore[2] = Topscore[1];
+                Topscore[1] = Topscore[0];
+                Topscore[0] = TotalAmount;
+
+                //名前上書き
+                Topname[2] = Topname[1];
+                Topname[1] = Topname[0];
+                Topname[0] = "";
+
+                Rank = 0;
+            }
+            else if (Topscore[1] < TotalAmount && Topscore[0] >= TotalAmount)
+            {
+                Debug.Log("2nd");
+                //スコア上書き
+                Topscore[2] = Topscore[1];
+                Topscore[1] = TotalAmount;
+
+                //名前上書き
+                Topname[2] = Topname[1];
+                Topname[1] = "";
+
+                Rank = 1;
+            }
+            else if (Topscore[2] < TotalAmount && Topscore[1] >= TotalAmount)// 3位
+            {
+                Debug.Log("3rd");
+                //スコア上書き
+                Topscore[2] = TotalAmount;
+
+                //名前上書き
+                Topname[2] = "";
+
+                Rank = 2;
+            }
+            else if (Topscore[2] >= TotalAmount)
+            {
+                SceneManager.LoadScene("Ranking");
+                Debug.Log(Topscore[2]);
+                Debug.Log(TotalAmount);
+                Debug.Log("Scena_change");
+
+                //Rank = 3;
+            }
+        }
     }
 
 
@@ -48,40 +105,23 @@ public class scoreUI : MonoBehaviour
     void Update()
     {
 
-        if (Topscore[0] < TotalAmount)
-            Topscore[0] = TotalAmount;
-            //Topname[0] = str;
+            ScoreUI.text = TotalAmount.WithComma();
 
-        if (Topscore[1] < TotalAmount && Topscore[0] > TotalAmount)
-            //Topscore[2] = Topscore[1];
-            Topscore[1] = TotalAmount;
-            //Topname[1] = str;
+            FirstrankUI.text = "1st";
+            SecondrankUI.text = "2rd";
+            ThirdrankUI.text = "3rd";
 
-        if (Topscore[2] < TotalAmount && Topscore[1] > TotalAmount)
-            Topscore[2] = TotalAmount;
-            //str = Topname[2];
+            FirstnameUI.text = Topname[0];
+            SecondnameUI.text = Topname[1];
+            ThirdnameUI.text = Topname[2];
 
-        if (Topscore[2] > TotalAmount)
-            SceneManager.LoadScene("Ranking");
+            FirstscoreUI.text = Topscore[0].WithComma();
+            SecondscoreUI.text = Topscore[1].WithComma();
+            ThirdscoreUI.text = Topscore[2].WithComma();
 
-
-        ScoreUI.text = TotalAmount.WithComma() + "円！！";
-
-        FirstrankUI.text = "1st";
-        SecondrankUI.text = "2rd";
-        ThirdrankUI.text = "3rd";
-
-        FirstnameUI.text = Topname[0];
-        SecondnameUI.text = Topname[1];
-        ThirdnameUI.text = Topname[2];
-
-        FirstscoreUI.text = Topscore[0].WithComma();
-        SecondscoreUI.text = Topscore[1].WithComma();
-        ThirdscoreUI.text = Topscore[2].WithComma();
-
-        KeyEntryCheck();
-    }
-
+            KeyEntryCheck();
+        }
+    
     public void Save()
     {
         //呼び出し時のキーと値をセットする
@@ -128,7 +168,7 @@ public class scoreUI : MonoBehaviour
         if (Topscore[0] == Topscore[1] && Topscore[1] == Topscore[2] && Topscore[0] == 0)
         {
             Topscore[0] = 1000;
-            Topscore[1] = 500;
+            Topscore[1] = 750;
             Save();
             Debug.Log("EntrySave");
         }
@@ -140,6 +180,19 @@ public class scoreUI : MonoBehaviour
             Save();
             Debug.Log("EntrySave");
         }
+    }
+
+    public void NameUpdate(int rank, string name)
+    {
+        Topname[rank] = name;
+        Save();
+        Debug.Log("NameUpdate");
+    }
+
+    public void Getstring(string str)
+    {
+        Debug.Log(str);
+        NameUpdate(Rank, str);
     }
 
 
